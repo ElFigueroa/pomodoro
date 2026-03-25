@@ -75,6 +75,9 @@ body {
     height: 100vh;
     background-color: var(--color-dark-alpha);
     overflow: hidden;
+    /* Asegura que el UI quede encima del canvas de partículas (z-index: 0) */
+    position: relative;
+    z-index: 1;
 }
 
 /* ===========================
@@ -270,25 +273,14 @@ body {
     transform: scale(1.1);
 }
 
-/* Botones toggle (shuffle, loop): apagados por defecto */
+/* Botones toggle (shuffle, loop): apagados por defecto.
+   El estado activo se maneja con inline style directo desde JS
+   para evitar conflictos de cascada CSS. */
 .btn-icon.btn-toggle {
     opacity: 0.35;
-    color: white;
-}
-
-.btn-icon.btn-toggle .icon {
-    color: white;
-}
-
-/* Estado activo: iluminado con color primario — apunta al ícono directamente */
-.btn-icon.btn-toggle.btn-active {
-    opacity: 1;
-    color: var(--color-primary);
-}
-
-.btn-icon.btn-toggle.btn-active .icon {
-    color: var(--color-primary);
-    text-shadow: 0 0 8px var(--color-primary), 0 1px 4px rgba(0, 0, 0, 0.6);
+    transition: opacity var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease,
+                color var(--transition-speed) ease;
 }
 
 /* Botón mute integrado con el control de volumen */
@@ -1033,8 +1025,182 @@ hr {
 }
 
 /* ===========================
-   SMOOTH SCROLL
+   TEMA CLARO
+   Se activa con data-theme="light" en <body>
    =========================== */
+
+[data-theme="light"] {
+    --color-dark:        #e8eaf0;
+    --color-dark-alpha:  rgba(240, 242, 248, 0.82);
+    --color-text:        #1a1a2e;
+    --color-accent:      #555577;
+    --color-accent-light:#777799;
+    --color-border:      rgba(0, 0, 0, 0.12);
+    --color-primary:     #0066cc;
+    --color-primary-dark:#004499;
+    --color-success:     #007733;
+    --color-warning:     #cc3300;
+}
+
+[data-theme="light"] body {
+    background-color: var(--color-dark);
+}
+
+[data-theme="light"] .modal-content {
+    background: rgba(230, 235, 248, 0.97);
+}
+
+[data-theme="light"] .btn-icon {
+    color: #222244;
+}
+
+[data-theme="light"] .btn-icon.btn-toggle {
+    color: #444466;
+}
+
+[data-theme="light"] .btn-primary {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+[data-theme="light"] .btn-secondary {
+    background-color: rgba(0, 0, 80, 0.1);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+/* ===========================
+   CANVAS DE PARTÍCULAS
+   z-index 10 → flota SOBRE el contenido UI (pointer-events: none).
+   Estilo Wallpaper Engine: partículas visibles sobre el fondo y la interfaz.
+   =========================== */
+
+.particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* ===========================
+   BOTÓN TOGGLE DE PARTÍCULAS
+   =========================== */
+
+/* Botón de partículas en el footer: mismo sistema que shuffle/loop */
+.footer-btn.btn-toggle {
+    opacity: 0.55;
+    transition: opacity var(--transition-speed) ease;
+}
+
+/* ===========================
+   ESTADÍSTICAS
+   =========================== */
+
+.stats-section {
+    margin-bottom: 1.5rem;
+}
+
+.stats-section-title {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--color-accent-light);
+    margin-bottom: 0.75rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.stat-card-accent {
+    border-color: rgba(74, 158, 255, 0.3);
+    background: rgba(74, 158, 255, 0.08);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    line-height: 1;
+}
+
+.streak-value {
+    color: #ffb86c;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--color-accent-light);
+    text-align: center;
+}
+
+.stats-bottom {
+    border-top: 1px solid var(--color-border);
+    padding-top: 1.25rem;
+}
+
+/* Mini gráfico de barras de últimos 7 días */
+.stats-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 70px;
+    padding: 0 0.25rem;
+}
+
+.stats-chart-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+}
+
+.stats-chart-bar {
+    width: 100%;
+    background: var(--color-primary);
+    border-radius: 3px 3px 0 0;
+    min-height: 3px;
+    transition: height 0.4s ease;
+    opacity: 0.75;
+}
+
+.stats-chart-bar.today {
+    background: var(--color-success);
+    opacity: 1;
+}
+
+.stats-chart-label {
+    font-size: 0.6rem;
+    color: var(--color-accent);
+    text-transform: capitalize;
+}
+
 
 .modal-body {
     scroll-behavior: smooth;

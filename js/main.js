@@ -7,6 +7,8 @@
 let pomodoro = null;
 let musicPlayer = null;
 let visualizer = null;
+let particlesBg = null;
+let pomodoroStats = null;
 let alertAudioElement = null; // Para reproducir la alerta de Vivaldi
 
 // ===========================
@@ -40,12 +42,19 @@ document.addEventListener('DOMContentLoaded', () => {
     alertAudioElement.volume = 0.7;
     
     // Inicializar módulos
-    pomodoro = new PomodoroTimer();
-    musicPlayer = new MusicPlayer();
-    
+    pomodoro      = new PomodoroTimer();
+    musicPlayer   = new MusicPlayer();
+    pomodoroStats = new PomodoroStats();
+
     // Inicializar visualizador
     const canvas = document.getElementById('visualizer-canvas');
     visualizer = new AudioVisualizer(canvas);
+
+    // Inicializar partículas de fondo
+    const particlesCanvas = document.getElementById('particles-canvas');
+    particlesBg = new ParticlesBackground(particlesCanvas);
+    // Conectar al visualizador para datos de frecuencia
+    particlesBg.setFrequencySource(() => visualizer.getFrequencyData());
     
     // Configurar callbacks
     setupCallbacks();
@@ -89,6 +98,11 @@ function setupCallbacks() {
 
     pomodoro.onCycleComplete = (cycleType) => {
         playNotification(cycleType);
+        // Registrar ciclo de Focus completado en estadísticas
+        if (cycleType === 'focus') {
+            pomodoroStats.recordFocusCycle(pomodoro.durations.focus);
+            showToast(`🍅 ¡Pomodoro completado! (${pomodoroStats.getTodayStats().cycles} hoy)`, 'success', 3000);
+        }
     };
 
     // Callbacks del reproductor de música
@@ -138,6 +152,33 @@ async function prepareVisualizerFromUserGesture() {
 // ===========================
 // INTERFAZ DE USUARIO - SETUP INICIAL
 // ===========================
+
+/**
+ * Aplica estado visual activo/inactivo a un botón toggle via inline style.
+ * Evita conflictos de cascada CSS — se aplica al botón y a su hijo .icon.
+ */
+function setToggleStyle(btn, isOn) {
+    const icon = btn.querySelector('.icon');
+    if (isOn) {
+        btn.style.opacity    = '1';
+        btn.style.color      = '';
+        btn.style.boxShadow  = '';
+        btn.style.borderRadius = '';
+        if (icon) {
+            icon.style.color      = '#ffffff';
+            icon.style.textShadow = '';
+        }
+    } else {
+        btn.style.opacity     = '0.35';
+        btn.style.color       = '';
+        btn.style.boxShadow   = '';
+        btn.style.borderRadius = '';
+        if (icon) {
+            icon.style.color      = '';
+            icon.style.textShadow = '';
+        }
+    }
+}
 
 function initializeUI() {
     const btnStart = document.getElementById('btn-start');
@@ -210,19 +251,19 @@ function initializeUI() {
         if (musicPlayer.playlist.length > 0) musicPlayer.playNext();
     });
 
-    // Shuffle y Loop — usan clases CSS para estado activo
+    // Shuffle y Loop — inline style directo, sin depender de cascada CSS
     const btnShuffle = document.getElementById('btn-shuffle');
     const btnLoop = document.getElementById('btn-loop');
 
     btnShuffle.addEventListener('click', () => {
         const isOn = musicPlayer.toggleShuffle();
-        btnShuffle.classList.toggle('btn-active', isOn);
+        setToggleStyle(btnShuffle, isOn);
         showToast(isOn ? 'Aleatorio activado' : 'Aleatorio desactivado', 'info', 1500);
     });
 
     btnLoop.addEventListener('click', () => {
         const isOn = musicPlayer.toggleLoop();
-        btnLoop.classList.toggle('btn-active', isOn);
+        setToggleStyle(btnLoop, isOn);
         showToast(isOn ? 'Repetir activado' : 'Repetir desactivado', 'info', 1500);
     });
 
@@ -245,6 +286,20 @@ function initializeUI() {
 
     // Configuración
     btnSettings.addEventListener('click', openSettingsModal);
+
+    // Estadísticas
+    document.getElementById('btn-stats').addEventListener('click', openStatsModal);
+
+    // Tema claro / oscuro
+    document.getElementById('btn-theme').addEventListener('click', toggleTheme);
+
+    // Partículas de fondo
+    const btnParticles = document.getElementById('btn-particles-toggle');
+    btnParticles.addEventListener('click', () => {
+        const isOn = toggleParticles();
+        setToggleStyle(btnParticles, isOn);
+        showToast(isOn ? 'Partículas activadas ✦' : 'Partículas desactivadas', 'info', 1500);
+    });
 
     // Modales
     setupModals();
@@ -754,6 +809,25 @@ function setupModals() {
             modal.classList.remove('active');
         });
     });
+
+    // Modal de Estadísticas — cerrar botones
+    const statsModal = document.getElementById('stats-modal');
+    document.getElementById('btn-close-stats').addEventListener('click', () => {
+        statsModal.classList.remove('active');
+    });
+    statsModal.querySelector('.modal-close').addEventListener('click', () => {
+        statsModal.classList.remove('active');
+    });
+    statsModal.addEventListener('click', (e) => {
+        if (e.target === statsModal) statsModal.classList.remove('active');
+    });
+    document.getElementById('btn-reset-stats').addEventListener('click', () => {
+        if (confirm('¿Reiniciar todas las estadísticas? Esta acción no se puede deshacer.')) {
+            pomodoroStats.reset();
+            renderStatsModal();
+            showToast('Estadísticas reiniciadas', 'info');
+        }
+    });
 }
 
 function openMusicModal() {
@@ -765,8 +839,98 @@ function openSettingsModal() {
 }
 
 // ===========================
-// CARGAR PREFERENCIAS
+// TEMA CLARO / OSCURO
 // ===========================
+
+function toggleTheme() {
+    const isDark = document.body.getAttribute('data-theme') !== 'light';
+    const newTheme = isDark ? 'light' : 'dark';
+    applyTheme(newTheme);
+    localStorage.setItem('app_theme', newTheme);
+}
+
+function applyTheme(theme) {
+    const isDark = theme !== 'light';
+    if (isDark) {
+        document.body.removeAttribute('data-theme');
+    } else {
+        document.body.setAttribute('data-theme', 'light');
+    }
+    const btn = document.getElementById('btn-theme');
+    if (btn) btn.querySelector('.icon').textContent = isDark ? '☀' : '🌙';
+    if (particlesBg) particlesBg.setTheme(isDark);
+}
+
+// ===========================
+// PARTÍCULAS DE FONDO
+// ===========================
+
+/**
+ * Activa o desactiva las partículas de fondo.
+ * @returns {boolean} nuevo estado (true = activo)
+ */
+function toggleParticles() {
+    if (!particlesBg) return false;
+    if (particlesBg.isActive) {
+        particlesBg.stop();
+        localStorage.setItem('particles_enabled', 'false');
+        return false;
+    } else {
+        particlesBg.start();
+        localStorage.setItem('particles_enabled', 'true');
+        return true;
+    }
+}
+
+// ===========================
+// ESTADÍSTICAS
+// ===========================
+
+function openStatsModal() {
+    renderStatsModal();
+    document.getElementById('stats-modal').classList.add('active');
+}
+
+function renderStatsModal() {
+    const all = pomodoroStats.getAll();
+
+    document.getElementById('stat-today-cycles').textContent  = all.today.cycles;
+    document.getElementById('stat-today-minutes').textContent = all.today.minutes;
+    document.getElementById('stat-week-cycles').textContent   = all.week.cycles;
+    document.getElementById('stat-week-minutes').textContent  = all.week.minutes;
+    document.getElementById('stat-total-cycles').textContent  = all.total.cycles;
+    document.getElementById('stat-streak').textContent        = all.streak;
+
+    // Mini gráfico de 7 días
+    const chartEl = document.getElementById('stats-chart');
+    chartEl.innerHTML = '';
+    const days = pomodoroStats.getLast7Days();
+    const maxCycles = Math.max(1, ...days.map(d => d.cycles));
+    const todayLabel = new Date().toLocaleDateString('es', { weekday: 'short' });
+
+    days.forEach(day => {
+        const heightPct = Math.round((day.cycles / maxCycles) * 100);
+        const isToday = day.label.toLowerCase() === todayLabel.toLowerCase();
+
+        const wrap = document.createElement('div');
+        wrap.className = 'stats-chart-bar-wrap';
+
+        const bar = document.createElement('div');
+        bar.className = 'stats-chart-bar' + (isToday ? ' today' : '');
+        // Altura proporcional (mínimo 3px, máximo 52px)
+        bar.style.height = `${Math.max(3, Math.round((day.cycles / maxCycles) * 52))}px`;
+        bar.title = `${day.cycles} pomodoro${day.cycles !== 1 ? 's' : ''}`;
+
+        const label = document.createElement('span');
+        label.className = 'stats-chart-label';
+        label.textContent = day.label;
+
+        wrap.appendChild(bar);
+        wrap.appendChild(label);
+        chartEl.appendChild(wrap);
+    });
+}
+
 
 function loadUserPreferences() {
     // Volumen
@@ -814,6 +978,23 @@ function loadUserPreferences() {
     const autoplay = localStorage.getItem('autoplay_music');
     if (autoplay !== null) {
         document.getElementById('autoplay-music').checked = autoplay === 'true';
+    }
+
+    // Tema claro / oscuro (detectar sistema si no hay preferencia guardada)
+    const savedTheme = localStorage.getItem('app_theme');
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(prefersDark ? 'dark' : 'light');
+    }
+
+    // Partículas de fondo
+    const particlesEnabled = localStorage.getItem('particles_enabled');
+    if (particlesEnabled === 'true') {
+        particlesBg.start();
+        const btnParticles = document.getElementById('btn-particles-toggle');
+        if (btnParticles) setToggleStyle(btnParticles, true);
     }
 }
 
