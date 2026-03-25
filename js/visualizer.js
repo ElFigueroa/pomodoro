@@ -320,6 +320,15 @@ class AudioVisualizer {
     }
 
     /**
+     * Expone el array de frecuencias actual para uso externo (partículas, etc.).
+     * Devuelve una referencia al Uint8Array interno (ya actualizado en cada frame).
+     * @returns {Uint8Array|null}
+     */
+    getFrequencyData() {
+        return this.freqDataArray || null;
+    }
+
+    /**
      * Cambia el número de barras
      */
     setBarCount(count) {

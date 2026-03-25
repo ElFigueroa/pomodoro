@@ -13,11 +13,20 @@
         <canvas id="background-video-canvas"></canvas>
     </div>
 
+    <!-- Canvas de partículas: position fixed encima del fondo, debajo del contenido UI -->
+    <canvas id="particles-canvas" class="particles-canvas"></canvas>
+
     <div class="container">
         <!-- HEADER -->
         <header class="header">
             <h1 class="title">Focus Music</h1>
             <div class="header-controls">
+                <button id="btn-stats" class="btn-icon" title="Estadísticas">
+                    <span class="icon">◎</span>
+                </button>
+                <button id="btn-theme" class="btn-icon" title="Cambiar tema (claro/oscuro)">
+                    <span class="icon">☀</span>
+                </button>
                 <button id="btn-music-toggle" class="btn-icon">
                     <span class="icon">♪</span>
                 </button>
@@ -72,6 +81,10 @@
             <button id="btn-background" class="btn-secondary footer-btn">
                 <span class="icon">◻</span>
                 <span class="text">Fondo</span>
+            </button>
+            <button id="btn-particles-toggle" class="btn-secondary footer-btn btn-toggle" title="Activar/desactivar partículas animadas">
+                <span class="icon">✦</span>
+                <span class="text">Partículas</span>
             </button>
             <input type="file" id="background-input" accept="image/*,video/*" style="display: none;">
 
@@ -235,10 +248,76 @@
         </div>
     </div>
 
+    <!-- STATS MODAL -->
+    <div id="stats-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Estadísticas</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Hoy -->
+                <div class="stats-section">
+                    <h3 class="stats-section-title">Hoy</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-value" id="stat-today-cycles">0</span>
+                            <span class="stat-label">Pomodoros</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="stat-today-minutes">0</span>
+                            <span class="stat-label">Minutos</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Esta semana -->
+                <div class="stats-section">
+                    <h3 class="stats-section-title">Esta semana</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-value" id="stat-week-cycles">0</span>
+                            <span class="stat-label">Pomodoros</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="stat-week-minutes">0</span>
+                            <span class="stat-label">Minutos</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Mini gráfico: últimos 7 días -->
+                <div class="stats-section">
+                    <h3 class="stats-section-title">Últimos 7 días</h3>
+                    <div id="stats-chart" class="stats-chart"></div>
+                </div>
+                <!-- Total y racha -->
+                <div class="stats-section stats-bottom">
+                    <div class="stats-grid">
+                        <div class="stat-card stat-card-accent">
+                            <span class="stat-value" id="stat-total-cycles">0</span>
+                            <span class="stat-label">Total pomodoros</span>
+                        </div>
+                        <div class="stat-card stat-card-accent">
+                            <span class="stat-value streak-value" id="stat-streak">0</span>
+                            <span class="stat-label">🔥 Racha (días)</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="btn-reset-stats" class="btn-secondary" style="margin-top:1rem;width:100%;">
+                    Reiniciar estadísticas
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-close-stats" class="btn-secondary">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- SCRIPTS -->
     <script src="js/pomodoro.js"></script>
     <script src="js/music-player.js"></script>
     <script src="js/visualizer.js"></script>
+    <script src="js/particles-bg.js"></script>
+    <script src="js/stats.js"></script>
     <script src="js/main.js"></script>
     <div id="toast-container" class="toast-container"></div>
 </body>
