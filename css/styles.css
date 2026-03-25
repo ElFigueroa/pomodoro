@@ -276,29 +276,39 @@ body {
     color: white;
 }
 
-/* Estado activo: iluminado con color primario */
+.btn-icon.btn-toggle .icon {
+    color: white;
+}
+
+/* Estado activo: iluminado con color primario — apunta al ícono directamente */
 .btn-icon.btn-toggle.btn-active {
     opacity: 1;
     color: var(--color-primary);
+}
+
+.btn-icon.btn-toggle.btn-active .icon {
+    color: var(--color-primary);
+    text-shadow: 0 0 8px var(--color-primary), 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
 /* Botón mute integrado con el control de volumen */
 .btn-mute-icon {
     padding: 0.35rem;
     font-size: 1.3rem;
-    transition: color var(--transition-speed) ease, transform var(--transition-speed) ease;
+    transition: color var(--transition-speed) ease, opacity var(--transition-speed) ease;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-/* Estado muteado: ícono atenuado en color advertencia */
-.btn-mute-icon.btn-muted .icon {
-    color: var(--color-warning, #e2a03f);
-    opacity: 0.7;
+.btn-mute-icon .icon {
+    transition: color var(--transition-speed) ease, opacity var(--transition-speed) ease;
 }
 
-.btn-mute-icon.muted .icon {
-    color: rgba(255, 255, 255, 0.3);
-    text-decoration: line-through;
+/* Estado muteado: ícono en rojo */
+.btn-mute-icon.btn-muted .icon {
+    color: #ff5555;
+    text-shadow: 0 0 6px rgba(255, 85, 85, 0.6), 0 1px 3px rgba(0, 0, 0, 0.7);
+    text-decoration: none;
+    opacity: 0.9;
 }
 
 .btn-control:disabled {

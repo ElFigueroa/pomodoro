@@ -622,13 +622,11 @@ function updateVolumeDisplay(volume) {
 }
 
 /**
- * Actualiza el ícono y la clase del botón mute.
- * El ícono ♪ se tacha visualmente cuando está muteado.
+ * Actualiza el estado visual del botón mute.
+ * El ícono ♪ se pone rojo con resplandor cuando está muteado.
  */
 function updateMuteButton(isMuted) {
     const btn = document.getElementById('btn-mute');
-    const icon = btn.querySelector('.icon');
-    icon.textContent = isMuted ? '♪̶' : '♪';
     btn.classList.toggle('btn-muted', isMuted);
     btn.title = isMuted ? 'Activar audio (M)' : 'Silenciar (M)';
 }
