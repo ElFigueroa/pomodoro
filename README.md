@@ -1,20 +1,133 @@
 ---
-{
-  "id": "file_gjhrjiap",
-  "filetype": "document",
-  "filename": "README",
-  "created_at": "2026-03-17T15:46:02.379Z",
-  "updated_at": "2026-03-17T15:46:02.379Z",
-  "meta": {
-    "location": "/",
-    "tags": [],
-    "categories": [],
-    "description": "",
-    "source": "markdown"
-  }
-}
+# 🍅 Focus Music — Reloj Pomodoro con Música
+
+Aplicación web minimalista para gestionar sesiones Pomodoro con reproductor de música local y visualizador de audio en tiempo real.
+
 ---
-# 🍅 Focus Music - Reloj Pomodoro con Música
+
+## 🌟 Características
+
+### ⏱️ Sistema Pomodoro
+- Ciclos automáticos: **Setup** (5min) → **Focus** (25min) → **Descanso corto** (5min) → **Descanso largo** (10min cada 2 ciclos)
+- Controles de **Iniciar / Pausar / Stop**
+- Indicador visual del ciclo actual con barra de progreso
+
+### 🎵 Reproductor de Música Local
+- Carga archivos **MP3, OGG, WAV** desde tu equipo
+- Arrastrar y soltar archivos (drag & drop)
+- **Playlist**: click en cualquier pista para reproducirla (con indicador ♪ de la canción activa)
+- **Aleatorio** y **Repetir** con indicadores visuales
+- **Barra de progreso** de la canción (seekable — haz clic para cambiar la posición)
+- Control de volumen deslizable + botón de **silenciar (♪)**
+
+### 📊 Visualizador de Audio
+- 72 barras de frecuencia en tiempo real
+- **Gradiente de color** dinámico: azul en la base → blanco en la cima
+- Esquinas superiores redondeadas para una apariencia pulida
+- Configurable: sensibilidad (0.5×–2.0×) y suavizado
+
+### 🎨 Personalización de Fondo
+- Soporta **imágenes** (JPG, PNG, GIF) y **videos** (MP4)
+- La imagen mantiene su brillo original (sin sobreposición oscura)
+
+### ⌨️ Atajos de Teclado
+
+| Tecla | Acción |
+|-------|--------|
+| `Espacio` | Reproducir / Pausar música |
+| `S` | Iniciar / Pausar el Pomodoro |
+| `M` | Silenciar / Activar audio |
+| `←` `→` | Pista anterior / siguiente |
+| `Esc` | Cerrar modal abierto |
+
+---
+
+## 📂 Estructura del Proyecto
+
+```
+pomodoro/
+├── index.html              # Estructura HTML principal
+├── css/
+│   └── styles.css          # Estilos minimalistas y responsivos
+├── js/
+│   ├── main.js             # Orquestación principal y eventos UI
+│   ├── pomodoro.js         # Lógica del temporizador
+│   ├── music-player.js     # Reproducción de audio (shuffle, loop, playlist)
+│   └── visualizer.js       # Visualizador de frecuencias con Canvas API
+├── assets/
+│   ├── images/             # Imágenes de fondo de ejemplo
+│   └── audio/              # Coloca aquí tus archivos de audio
+│       └── .gitkeep        # (archivos de audio excluidos del repo por su tamaño)
+└── README.md
+```
+
+---
+
+## 🚀 Cómo Usar
+
+### Requisitos
+La app debe servirse sobre **HTTP** (no `file://`) para que `fetch()` funcione correctamente al cargar audio por defecto.
+
+```bash
+# Opción 1 — Python 3
+cd /ruta/al/proyecto
+python3 -m http.server 8080
+# Abre http://localhost:8080
+
+# Opción 2 — VS Code Live Server
+# Click derecho en index.html → "Open with Live Server"
+```
+
+### Primeros pasos
+1. Haz clic en **♪** (esquina superior) para abrir el panel de música
+2. Carga tus archivos MP3 (botón o arrastrar y soltar)
+3. Opcionalmente cambia el fondo con el botón **◻ Fondo**
+4. Presiona **▶ Iniciar** para comenzar tu sesión Pomodoro
+
+---
+
+## ⚙️ Configuración Avanzada
+
+Abre el modal de configuración (**⚙**) para:
+- **Duraciones** de cada ciclo (Setup, Focus, Descanso Corto/Largo)
+- **Visualizador**: activar/desactivar, sensibilidad y suavizado
+- **Autoplay**: reproducir música al iniciar el Pomodoro
+- **Reset**: restaurar todos los valores por defecto
+
+Las preferencias se guardan automáticamente en `localStorage`.
+
+---
+
+## 🔧 Detalles Técnicos
+
+- **Web Audio API** — análisis de frecuencias para el visualizador
+- **File API** — carga de archivos locales
+- **Canvas API** — renderización con gradientes y `roundRect`
+- **LocalStorage** — persistencia de preferencias
+- Sin dependencias externas — Vanilla JS puro
+
+### Navegadores soportados
+Chrome 99+, Firefox 112+, Safari 15.4+, Edge 99+
+
+---
+
+## 🐛 Solución de Problemas
+
+**"El visualizador no responde"**  
+→ Asegúrate de que hay música reproduciéndose; el AudioContext se activa al primer clic del usuario.
+
+**"No carga la música automáticamente al abrir"**  
+→ Abre la app vía HTTP (ver Requisitos arriba). No funciona en `file://`.
+
+**"Las preferencias no se guardan"**  
+→ Verifica que `localStorage` no esté deshabilitado en tu navegador.
+
+---
+
+**Versión**: 2.0.0  
+**Última actualización**: Junio 2025  
+**Creado con ❤️ para mantener el enfoque**
+
 
 Una aplicación web moderna y minimalista para gestionar sesiones Pomodoro con músicaintegradora y visualización de audio en tiempo real.
 

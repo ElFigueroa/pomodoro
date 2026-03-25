@@ -140,7 +140,6 @@ async function prepareVisualizerFromUserGesture() {
 // ===========================
 
 function initializeUI() {
-    // Obtener elementos del DOM
     const btnStart = document.getElementById('btn-start');
     const btnPause = document.getElementById('btn-pause');
     const btnStop = document.getElementById('btn-stop');
@@ -162,7 +161,7 @@ function initializeUI() {
         updateStartPauseButtons();
     });
 
-    // Personalización
+    // Personalización de fondo
     btnBackground.addEventListener('click', () => backgroundInput.click());
     backgroundInput.addEventListener('change', handleBackgroundChange);
 
@@ -173,7 +172,14 @@ function initializeUI() {
         musicPlayer.setVolume(value);
         updateVolumeDisplay(value);
         e.target.style.setProperty('--slider-value', value + '%');
+        // Si el usuario sube el volumen estando muteado, desmutear
+        if (value > 0 && musicPlayer.isMuted) {
+            musicPlayer.isMuted = false;
+            updateMuteButton(false);
+        }
     });
+
+    // Botón mute — ahora es el ícono ♪ integrado
     btnMute.addEventListener('click', () => {
         const isMuted = musicPlayer.toggleMute();
         updateMuteButton(isMuted);
@@ -194,41 +200,47 @@ function initializeUI() {
         }
     });
 
-    btnPauseMusic.addEventListener('click', () => {
-        musicPlayer.pause();
-    });
+    btnPauseMusic.addEventListener('click', () => musicPlayer.pause());
 
     btnPrevTrack.addEventListener('click', () => {
-        if (musicPlayer.playlist.length > 0) {
-            musicPlayer.playPrevious();
-        }
+        if (musicPlayer.playlist.length > 0) musicPlayer.playPrevious();
     });
 
     btnNextTrack.addEventListener('click', () => {
-        if (musicPlayer.playlist.length > 0) {
-            musicPlayer.playNext();
-        }
+        if (musicPlayer.playlist.length > 0) musicPlayer.playNext();
     });
 
-    // Shuffle y Loop
+    // Shuffle y Loop — usan clases CSS para estado activo
     const btnShuffle = document.getElementById('btn-shuffle');
     const btnLoop = document.getElementById('btn-loop');
 
-    btnShuffle.style.opacity = '0.4';
-    btnLoop.style.opacity = '0.4';
-
     btnShuffle.addEventListener('click', () => {
         const isOn = musicPlayer.toggleShuffle();
-        btnShuffle.style.opacity = isOn ? '1' : '0.4';
-        btnShuffle.style.color = isOn ? 'var(--color-primary)' : 'white';
+        btnShuffle.classList.toggle('btn-active', isOn);
         showToast(isOn ? 'Aleatorio activado' : 'Aleatorio desactivado', 'info', 1500);
     });
 
     btnLoop.addEventListener('click', () => {
         const isOn = musicPlayer.toggleLoop();
-        btnLoop.style.opacity = isOn ? '1' : '0.4';
-        btnLoop.style.color = isOn ? 'var(--color-primary)' : 'white';
+        btnLoop.classList.toggle('btn-active', isOn);
         showToast(isOn ? 'Repetir activado' : 'Repetir desactivado', 'info', 1500);
+    });
+
+    // Barra de progreso de la canción — seekable
+    const trackProgressBar = document.getElementById('track-progress-bar');
+    trackProgressBar.addEventListener('click', (e) => {
+        const audio = musicPlayer.audioElement;
+        if (!audio.duration || isNaN(audio.duration)) return;
+        const rect = trackProgressBar.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        audio.currentTime = ratio * audio.duration;
+    });
+
+    // Actualizar progreso en tiempo real
+    musicPlayer.audioElement.addEventListener('timeupdate', updateTrackProgress);
+    musicPlayer.audioElement.addEventListener('ended', () => {
+        document.getElementById('track-progress-fill').style.width = '0%';
+        document.getElementById('track-time').textContent = '--:-- / --:--';
     });
 
     // Configuración
@@ -237,11 +249,38 @@ function initializeUI() {
     // Modales
     setupModals();
 
-    // Mostrar estado inicial
+    // Estado inicial de la UI
     updateTimerDisplay(pomodoro.getFormattedTime());
     updateCycleIndicator(pomodoro.currentCycleType, pomodoro.cycleCount);
     updateVolumeDisplay(musicPlayer.getVolume());
 }
+
+// ===========================
+// PROGRESO DE CANCIÓN
+// ===========================
+
+/**
+ * Formatea segundos en M:SS
+ */
+function formatTime(seconds) {
+    if (!seconds || isNaN(seconds)) return '0:00';
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+/**
+ * Actualiza la barra de progreso y el tiempo de la canción actual
+ */
+function updateTrackProgress() {
+    const audio = musicPlayer.audioElement;
+    if (!audio.duration || isNaN(audio.duration)) return;
+    const progress = (audio.currentTime / audio.duration) * 100;
+    document.getElementById('track-progress-fill').style.width = progress + '%';
+    document.getElementById('track-time').textContent =
+        `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+}
+
 
 // ===========================
 // ATAJOS DE TECLADO
@@ -281,6 +320,13 @@ function setupKeyboardShortcuts() {
                 if (!modalOpen && musicPlayer.playlist.length > 0) {
                     e.preventDefault();
                     musicPlayer.playPrevious();
+                }
+                break;
+            case 'KeyM':
+                e.preventDefault();
+                {
+                    const isMuted = musicPlayer.toggleMute();
+                    updateMuteButton(isMuted);
                 }
                 break;
             case 'Escape':
@@ -575,9 +621,16 @@ function updateVolumeDisplay(volume) {
     slider.style.setProperty('--slider-value', volume + '%');
 }
 
+/**
+ * Actualiza el ícono y la clase del botón mute.
+ * El ícono ♪ se tacha visualmente cuando está muteado.
+ */
 function updateMuteButton(isMuted) {
     const btn = document.getElementById('btn-mute');
-    btn.querySelector('.icon').textContent = isMuted ? '🔇' : '🔔';
+    const icon = btn.querySelector('.icon');
+    icon.textContent = isMuted ? '♪̶' : '♪';
+    btn.classList.toggle('btn-muted', isMuted);
+    btn.title = isMuted ? 'Activar audio (M)' : 'Silenciar (M)';
 }
 
 // ===========================

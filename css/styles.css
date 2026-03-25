@@ -100,6 +100,12 @@ body {
     gap: 1rem;
 }
 
+/* Sombra extra para botones del header sobre fondos claros */
+.header-controls .btn-icon .icon {
+    font-size: 1.6rem;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8));
+}
+
 /* ===========================
    MAIN CONTENT
    =========================== */
@@ -248,19 +254,51 @@ body {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    transition: transform var(--transition-speed) ease;
+    transition: transform var(--transition-speed) ease, color var(--transition-speed) ease, opacity var(--transition-speed) ease;
     padding: 0.5rem;
     color: white;
 }
 
 .btn-icon .icon {
     font-size: 1.5rem;
-    color: white;
+    color: inherit;
     font-weight: 300;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
 }
 
 .btn-icon:hover {
     transform: scale(1.1);
+}
+
+/* Botones toggle (shuffle, loop): apagados por defecto */
+.btn-icon.btn-toggle {
+    opacity: 0.35;
+    color: white;
+}
+
+/* Estado activo: iluminado con color primario */
+.btn-icon.btn-toggle.btn-active {
+    opacity: 1;
+    color: var(--color-primary);
+}
+
+/* Botón mute integrado con el control de volumen */
+.btn-mute-icon {
+    padding: 0.35rem;
+    font-size: 1.3rem;
+    transition: color var(--transition-speed) ease, transform var(--transition-speed) ease;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+/* Estado muteado: ícono atenuado en color advertencia */
+.btn-mute-icon.btn-muted .icon {
+    color: var(--color-warning, #e2a03f);
+    opacity: 0.7;
+}
+
+.btn-mute-icon.muted .icon {
+    color: rgba(255, 255, 255, 0.3);
+    text-decoration: line-through;
 }
 
 .btn-control:disabled {
@@ -333,48 +371,92 @@ body {
     padding: 0.6rem 1.2rem;
     border-radius: 4px;
     white-space: nowrap;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
 }
 
 .music-player-controls {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.3rem;
     padding: 0.5rem 1rem;
     background-color: rgba(255, 255, 255, 0.03);
-    border-radius: 4px;
+    border-radius: 8px;
     flex: 1;
-    min-width: 250px;
+    min-width: 260px;
 }
 
-.current-track-info {
+/* Fila: nombre de pista + tiempo */
+.track-info-row {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    flex: 1;
+    gap: 0.5rem;
     min-width: 0;
 }
 
 .current-track-name {
     color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 150px;
+    flex: 1;
+}
+
+.track-time {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.35);
+    font-family: 'Courier New', monospace;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Barra de progreso de la canción */
+.track-progress-bar {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: height var(--transition-speed) ease;
+}
+
+.track-progress-bar:hover {
+    height: 5px;
+}
+
+.track-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--color-primary), rgba(80, 250, 123, 0.8));
+    border-radius: 2px;
+    transition: width 0.25s linear;
+    pointer-events: none;
 }
 
 .music-controls-buttons {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.1rem;
     align-items: center;
+    justify-content: center;
 }
 
+/* Sombra sutil en todos los íconos del reproductor para legibilidad en fondos claros */
+.music-controls-buttons .btn-icon .icon,
+.volume-control .btn-icon .icon {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+/* Control de volumen rediseñado */
 .volume-control {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem;
     background-color: rgba(255, 255, 255, 0.03);
-    border-radius: 4px;
+    border-radius: 8px;
     border: none;
 }
 

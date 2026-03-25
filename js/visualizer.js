@@ -201,10 +201,16 @@ class AudioVisualizer {
         }
 
         this.ctx.save();
-        this.ctx.fillStyle = this.waveColor;
         this.ctx.globalAlpha = 1;
         this.ctx.shadowColor = 'transparent';
         this.ctx.shadowBlur = 0;
+
+        // Gradiente vertical: color primario en la base, blanco en la cima
+        const gradient = this.ctx.createLinearGradient(0, height, 0, 0);
+        gradient.addColorStop(0, 'rgba(74, 158, 255, 0.9)');
+        gradient.addColorStop(0.45, 'rgba(120, 200, 255, 0.95)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 1)');
+        this.ctx.fillStyle = gradient;
 
         for (let i = 0; i < barCount; i++) {
             // Mapeo casi lineal para repartir el movimiento a lo largo de todo el ancho.
@@ -238,7 +244,15 @@ class AudioVisualizer {
             const x = i * (barWidth + gap);
             const y = height - barHeight;
 
-            this.ctx.fillRect(x, y, barWidth, barHeight);
+            // Dibujar barra con esquinas superiores redondeadas para barras visibles
+            const radius = barHeight > 5 ? Math.min(barWidth / 2, 2.5) : 0;
+            if (radius > 0 && typeof this.ctx.roundRect === 'function') {
+                this.ctx.beginPath();
+                this.ctx.roundRect(x, y, barWidth, barHeight, [radius, radius, 0, 0]);
+                this.ctx.fill();
+            } else {
+                this.ctx.fillRect(x, y, barWidth, barHeight);
+            }
         }
         this.ctx.restore();
     }
