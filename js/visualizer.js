@@ -205,12 +205,8 @@ class AudioVisualizer {
         this.ctx.shadowColor = 'transparent';
         this.ctx.shadowBlur = 0;
 
-        // Gradiente vertical: color primario en la base, blanco en la cima
-        const gradient = this.ctx.createLinearGradient(0, height, 0, 0);
-        gradient.addColorStop(0, 'rgba(74, 158, 255, 0.9)');
-        gradient.addColorStop(0.45, 'rgba(120, 200, 255, 0.95)');
-        gradient.addColorStop(1, 'rgba(255, 255, 255, 1)');
-        this.ctx.fillStyle = gradient;
+        // Barras blancas puras
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
 
         for (let i = 0; i < barCount; i++) {
             // Mapeo casi lineal para repartir el movimiento a lo largo de todo el ancho.

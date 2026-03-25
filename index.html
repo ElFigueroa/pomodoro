@@ -312,13 +312,19 @@
         </div>
     </div>
 
-    <!-- SCRIPTS -->
-    <script src="js/pomodoro.js"></script>
-    <script src="js/music-player.js"></script>
-    <script src="js/visualizer.js"></script>
-    <script src="js/particles-bg.js"></script>
-    <script src="js/stats.js"></script>
-    <script src="js/main.js"></script>
+    <!-- SCRIPTS — ?v= fuerza recarga si el navegador tiene caché antigua -->
+    <script>
+        // Captura errores JS globales para diagnóstico
+        window.onerror = function(msg, src, line, col, err) {
+            console.error('[APP ERROR]', msg, 'at', src + ':' + line);
+        };
+    </script>
+    <script src="js/pomodoro.js?v=20260325b"></script>
+    <script src="js/music-player.js?v=20260325b"></script>
+    <script src="js/visualizer.js?v=20260325b"></script>
+    <script src="js/particles-bg.js?v=20260325b"></script>
+    <script src="js/stats.js?v=20260325b"></script>
+    <script src="js/main.js?v=20260325b"></script>
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>

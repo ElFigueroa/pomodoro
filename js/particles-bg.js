@@ -65,7 +65,16 @@ class ParticlesBackground {
     }
 
     _make(W, H, scattered = false) {
-        const r = 2 + Math.random() * 3.5;       // radio 2–5.5 px
+        // Colores entre amarillo cálido y blanco, como partículas de bosque mágico
+        const COLORS = [
+            '#ffffff',          // blanco puro
+            '#fffde7',          // blanco cálido
+            '#fff9c4',          // amarillo muy pálido
+            '#fff176',          // amarillo claro
+            '#ffee58',          // amarillo suave
+            '#ffe082',          // ámbar claro
+        ];
+        const r = 1 + Math.random() * 2;           // radio 1–3 px (pequeñas)
         return {
             x:  Math.random() * W,
             y:  scattered ? Math.random() * H : H + r + Math.random() * 60,
@@ -75,7 +84,7 @@ class ParticlesBackground {
             op: 0.4 + Math.random() * 0.5,        // opacidad base 0.4–0.9
             ph: Math.random() * Math.PI * 2,      // fase de pulso
             bin: Math.floor(Math.random() * 48),  // bin de frecuencia asignado
-            color: this.COLORS[Math.floor(Math.random() * this.COLORS.length)],
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
         };
     }
 

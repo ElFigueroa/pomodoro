@@ -160,13 +160,13 @@ async function prepareVisualizerFromUserGesture() {
 function setToggleStyle(btn, isOn) {
     const icon = btn.querySelector('.icon');
     if (isOn) {
-        btn.style.opacity     = '1';
-        btn.style.color       = '#4a9eff';
-        btn.style.boxShadow   = '0 0 10px rgba(74, 158, 255, 0.5)';
-        btn.style.borderRadius = '6px';
+        btn.style.opacity    = '1';
+        btn.style.color      = '';
+        btn.style.boxShadow  = '';
+        btn.style.borderRadius = '';
         if (icon) {
-            icon.style.color      = '#4a9eff';
-            icon.style.textShadow = '0 0 10px #4a9eff, 0 1px 4px rgba(0,0,0,0.6)';
+            icon.style.color      = '#ffffff';
+            icon.style.textShadow = '';
         }
     } else {
         btn.style.opacity     = '0.35';
