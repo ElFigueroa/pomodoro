@@ -181,6 +181,7 @@ Ver sección 5. El canvas de partículas debe:
 
 | Clave                    | Tipo    | Descripción                              |
 |--------------------------|---------|------------------------------------------|
+| `app_mode`               | string  | `'pomodoro'` o `'clock'`                 |
 | `app_theme`              | string  | `'dark'` o `'light'`                     |
 | `particles_enabled`      | string  | `'true'` o `'false'`                     |
 | `music_player_volume`    | string  | número 0–100                             |
@@ -219,6 +220,7 @@ Ver sección 5. El canvas de partículas debe:
 ## 10. Funcionalidades implementadas (estado al 25 Mar 2026)
 
 - ✅ Temporizador Pomodoro con ciclos configurables
+- ✅ **Modo reloj** — reloj de tiempo real con fecha en español, switch desde el header
 - ✅ Reproductor de música local (drag & drop o selector de archivos)
 - ✅ Visualizador de audio (barras FFT, blancas, con suavizado)
 - ✅ Fondo personalizable (imagen o video del usuario)

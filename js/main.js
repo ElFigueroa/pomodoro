@@ -11,6 +11,9 @@ let particlesBg = null;
 let pomodoroStats = null;
 let alertAudioElement = null; // Para reproducir la alerta de Vivaldi
 
+let clockInterval = null;
+let currentMode = 'pomodoro'; // 'pomodoro' | 'clock'
+
 // ===========================
 // TOAST NOTIFICATIONS
 // ===========================
@@ -147,6 +150,63 @@ async function prepareVisualizerFromUserGesture() {
     } catch (e) {
         console.warn('No se pudo preparar el visualizador:', e);
     }
+}
+
+// ===========================
+// MODO RELOJ
+// ===========================
+
+const CLOCK_DAYS_ES   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const CLOCK_MONTHS_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function updateClockDisplay() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('clock-time').textContent = `${hh}:${mm}:${ss}`;
+
+    const dayName   = CLOCK_DAYS_ES[now.getDay()];
+    const day       = now.getDate();
+    const monthName = CLOCK_MONTHS_ES[now.getMonth()];
+    const year      = now.getFullYear();
+    document.getElementById('clock-date').textContent = `${dayName}, ${day} de ${monthName} de ${year}`;
+}
+
+function startClock() {
+    updateClockDisplay();
+    clockInterval = setInterval(updateClockDisplay, 1000);
+}
+
+function stopClock() {
+    if (clockInterval) {
+        clearInterval(clockInterval);
+        clockInterval = null;
+    }
+}
+
+function switchMode(mode) {
+    currentMode = mode;
+    const pomodoroSection = document.getElementById('pomodoro-section');
+    const clockSection    = document.getElementById('clock-section');
+    const switchIcon      = document.getElementById('mode-switch-icon');
+    const btn             = document.getElementById('btn-mode-switch');
+
+    if (mode === 'clock') {
+        pomodoroSection.style.display = 'none';
+        clockSection.style.display    = 'flex';
+        switchIcon.textContent        = '◫';
+        btn.title                     = 'Cambiar a Pomodoro';
+        startClock();
+    } else {
+        clockSection.style.display    = 'none';
+        pomodoroSection.style.display = 'flex';
+        switchIcon.textContent        = '◷';
+        btn.title                     = 'Cambiar a reloj';
+        stopClock();
+    }
+
+    localStorage.setItem('app_mode', mode);
 }
 
 // ===========================
@@ -289,6 +349,11 @@ function initializeUI() {
 
     // Estadísticas
     document.getElementById('btn-stats').addEventListener('click', openStatsModal);
+
+    // Cambio de modo: Pomodoro ↔ Reloj
+    document.getElementById('btn-mode-switch').addEventListener('click', () => {
+        switchMode(currentMode === 'pomodoro' ? 'clock' : 'pomodoro');
+    });
 
     // Tema claro / oscuro
     document.getElementById('btn-theme').addEventListener('click', toggleTheme);
@@ -995,6 +1060,12 @@ function loadUserPreferences() {
         particlesBg.start();
         const btnParticles = document.getElementById('btn-particles-toggle');
         if (btnParticles) setToggleStyle(btnParticles, true);
+    }
+
+    // Modo: pomodoro o reloj
+    const savedMode = localStorage.getItem('app_mode');
+    if (savedMode === 'clock') {
+        switchMode('clock');
     }
 }
 

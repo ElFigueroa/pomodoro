@@ -14,6 +14,46 @@
   }
 }
 ---
+# 🔧 Cambios Realizados
+
+---
+
+## ✨ Modo Reloj + Mejoras de UI (27 Mar 2026)
+
+### Modo Reloj
+Se implementó un modo reloj que convierte la app en un reloj de tiempo real, con opción de volver al temporizador Pomodoro.
+
+**Cambios en `index.html`**:
+- Se agregó botón `#btn-mode-switch` en el header con ícono unicode `◷` (en armonía con el estilo existente)
+- Se agregó sección `#clock-section` con `#clock-date` y `#clock-time`
+- Se añadió `id="pomodoro-section"` a la sección del timer para poder ocultarla/mostrarla
+
+**Cambios en `js/main.js`**:
+- Variables globales `clockInterval` y `currentMode`
+- Función `updateClockDisplay()` — actualiza hora (HH:MM:SS) y fecha en español cada segundo
+- Función `startClock()` / `stopClock()` — gestiona el intervalo
+- Función `switchMode(mode)` — alterna visibilidad de secciones, actualiza ícono y persiste en `localStorage`
+- Listener en el botón `#btn-mode-switch`
+- En `loadUserPreferences()`: restaura el modo guardado al recargar
+
+**Comportamiento**:
+- Muestra fecha completa: *"Viernes, 27 de marzo de 2026"*
+- Hora en tiempo real con segundos: `HH:MM:SS`
+- Ícono `◷` = ir al reloj · `◫` = volver al Pomodoro
+- El visualizador y el reproductor de música siguen activos en ambos modos
+- Preferencia guardada en `localStorage` con clave `app_mode`
+
+**Cambios en `css/styles.css`**:
+- Nuevas clases `.clock-section` y `.clock-date`
+- La sección del reloj reutiliza la clase `.timer-number` del Pomodoro para mantener coherencia visual
+
+### Slider de Volumen en Blanco
+- Se reemplazó el color `var(--color-primary)` (azul) por `#ffffff` en la barra de volumen
+- El relleno progresivo también es blanco semitransparente
+- Al hover el thumb se vuelve levemente translúcido como feedback sutil
+
+---
+
 # 🔧 Cambios Realizados - Correcciones de Errores
 
 ## Resumen

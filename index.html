@@ -21,6 +21,9 @@
         <header class="header">
             <h1 class="title">Focus Music</h1>
             <div class="header-controls">
+                <button id="btn-mode-switch" class="btn-icon" title="Cambiar a reloj">
+                    <span class="icon" id="mode-switch-icon">◷</span>
+                </button>
                 <button id="btn-stats" class="btn-icon" title="Estadísticas">
                     <span class="icon">◎</span>
                 </button>
@@ -39,7 +42,7 @@
         <!-- MAIN CONTENT -->
         <main class="main-content">
             <!-- POMODORO TIMER -->
-            <section class="timer-section">
+            <section id="pomodoro-section" class="timer-section">
                 <div class="cycle-indicator">
                     <span id="cycle-name" class="cycle-name">Setup</span>
                     <span id="cycle-number" class="cycle-number">Prep</span>
@@ -67,6 +70,16 @@
 
                 <div class="progress-bar">
                     <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </section>
+
+            <!-- CLOCK MODE -->
+            <section id="clock-section" class="clock-section" style="display:none">
+                <div id="clock-date" class="clock-date">—</div>
+                <div class="timer-display">
+                    <div class="timer-number">
+                        <span id="clock-time">00:00:00</span>
+                    </div>
                 </div>
             </section>
 
@@ -319,12 +332,12 @@
             console.error('[APP ERROR]', msg, 'at', src + ':' + line);
         };
     </script>
-    <script src="js/pomodoro.js?v=20260325b"></script>
-    <script src="js/music-player.js?v=20260325b"></script>
-    <script src="js/visualizer.js?v=20260325b"></script>
-    <script src="js/particles-bg.js?v=20260325b"></script>
-    <script src="js/stats.js?v=20260325b"></script>
-    <script src="js/main.js?v=20260325b"></script>
+    <script src="js/pomodoro.js?v=20260327c"></script>
+    <script src="js/music-player.js?v=20260327c"></script>
+    <script src="js/visualizer.js?v=20260327c"></script>
+    <script src="js/particles-bg.js?v=20260327c"></script>
+    <script src="js/stats.js?v=20260327c"></script>
+    <script src="js/main.js?v=20260327c"></script>
     <div id="toast-container" class="toast-container"></div>
 </body>
 </html>

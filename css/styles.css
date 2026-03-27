@@ -331,6 +331,34 @@ body {
 
 /* ===========================
    VISUALIZER SECTION
+/* ===========================
+   CLOCK MODE
+   =========================== */
+
+.clock-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    max-width: 600px;
+    width: 100%;
+}
+
+.clock-date {
+    font-size: 1rem;
+    color: var(--color-accent);
+    text-transform: capitalize;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    font-weight: 500;
+}
+
+.clock-section .timer-number {
+    font-size: clamp(3rem, 18vw, 7rem);
+}
+
+/* ===========================
+   VISUALIZER
    =========================== */
 
 .visualizer-section {
@@ -468,7 +496,7 @@ body {
     appearance: none;
     height: 5px;
     border-radius: 3px;
-    background: linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) var(--slider-value, 70%), rgba(255, 255, 255, 0.1) var(--slider-value, 70%), rgba(255, 255, 255, 0.1) 100%);
+    background: linear-gradient(to right, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.9) var(--slider-value, 70%), rgba(255, 255, 255, 0.15) var(--slider-value, 70%), rgba(255, 255, 255, 0.15) 100%);
     outline: none;
     cursor: pointer;
 }
@@ -479,7 +507,7 @@ body {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--color-primary);
+    background: #ffffff;
     cursor: pointer;
     transition: background var(--transition-speed) ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -489,7 +517,7 @@ body {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--color-primary);
+    background: #ffffff;
     cursor: pointer;
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -506,11 +534,11 @@ body {
 }
 
 .volume-slider:hover::-webkit-slider-thumb {
-    background: var(--color-success);
+    background: rgba(255,255,255,0.75);
 }
 
 .volume-slider:hover::-moz-range-thumb {
-    background: var(--color-success);
+    background: rgba(255,255,255,0.75);
 }
 
 /* ===========================
